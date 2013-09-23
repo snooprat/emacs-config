@@ -1,15 +1,7 @@
 ;; ==============================
-;; 根据系统加载配置
+;; 加载配置
 ;; ==============================
-(cond
- ;; WINDOWS配置
- ((memq system-type '(windows-nt cygwin))
-  (defconst my-emacs-path "D:/UTILITIES/emacs-24/" "windows的emacs相关配置文件的路径")
-  (defconst emacs-lisps-path "D:/UTILITIES/emacs-24/lisp/" "windows的emacs lisps的路径")
-  (set-face-attribute 'default nil :font "Consolas 11"))
 
- ;; LINUX配置
- ((memq system-type '(gnu/linux))
   (defconst my-emacs-path "~/emacs/" "linux的emacs相关配置文件的路径")
   (defconst emacs-lisps-path "/usr/share/emacs/24.3/lisp/" "Linux的emacs lisp包的路径")
   (defconst system-head-file-dir (list "/usr/include" "/usr/local/include" "/usr/include/sys") "系统头文件目录")
@@ -20,7 +12,7 @@
   	      (with-selected-frame frame
   		(blink-cursor-mode t)
   		(set-fontset-font "fontset-default"
-  				  'han '("WenQuanYi Micro Hei Mono" . "unicode-bmp")))))))
+  				  'han '("WenQuanYi Micro Hei Mono" . "unicode-bmp")))))
 
 (defconst my-emacs-lisps-path (concat my-emacs-path "el/") "我的emacs lisp包的路径")
 (defconst my-cedet-el (concat my-emacs-lisps-path "cedet-1.1/common/cedet.el") "官方cedet.el路径")
@@ -125,7 +117,8 @@
       delete-old-versions t ; 自动删除旧的备份文件
       kept-new-versions 4 ; 保留最近的4个备份文件
       kept-old-versions 2 ; 保留最早的2个备份文件
-      version-control t) ; 多次备份
+      version-control t ; 多次备份
+      vc-follow-symlinks t) ; 直接编辑受VC控制的原文档
 
 ;; ffap,打开当前point的文件
 (ffap-bindings)
@@ -136,10 +129,10 @@
   `(ffap-settings))
 
 ;; 切换窗口
-(global-set-key ( kbd "<C-tab>") 'other-window)
+(global-set-key (kbd "<C-tab>") 'other-window)
 
 ;; 不询问,立即关闭文件
-(global-set-key ( kbd "C-x k") 'kill-this-buffer)
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
 
 ;; 启用以下功能
 ;; (put 'narrow-to-region 'disabled nil)
@@ -148,23 +141,23 @@
 
 ;; ibuffe
 (require 'ibuffer)
-(global-set-key ( kbd "C-x C-b ") 'ibuffer)
+(global-set-key (kbd "C-x C-b ") 'ibuffer)
 
 ;; 显示最近打开的文件
 (recentf-mode t)
-(global-set-key ( kbd "C-x C-r") 'recentf-open-files)
+(global-set-key (kbd "C-x C-r") 'recentf-open-files)
 
 ;; 查找文件中的关键字
 (setq grep-find-command "find . -name \\* -type f -print0 | xargs -0 -e grep -nH -e ")
-(global-set-key ( kbd "C-M-g") 'grep-find)
+(global-set-key (kbd "C-M-g") 'grep-find)
 
 ;; 快速打开
-(global-set-key ( kbd "C-x E") 'emacs-conf)
-(global-set-key ( kbd "C-x W") 'my-notes)
-(global-set-key ( kbd "C-x J") 'my-journal)
-(global-set-key ( kbd "C-x T") 'my-todo-list)
-(global-set-key ( kbd "C-x g l") 'goto-emacs-lisps-dir)
-(global-set-key ( kbd "C-x g e") 'goto-my-emacs-dir)
+(global-set-key (kbd "C-x E") 'emacs-conf)
+(global-set-key (kbd "C-x W") 'my-notes)
+(global-set-key (kbd "C-x J") 'my-journal)
+(global-set-key (kbd "C-x T") 'my-todo-list)
+(global-set-key (kbd "C-x g l") 'goto-emacs-lisps-dir)
+(global-set-key (kbd "C-x g e") 'goto-my-emacs-dir)
 
 
 ;; ==============================
@@ -190,13 +183,13 @@
 ;; (setq save-abbrevs nil)
 
 ;; 撤销上一步
-(global-set-key ( kbd "C-z") 'undo)
+(global-set-key (kbd "C-z") 'undo)
 
 ;; 取消撤销
-(global-set-key ( kbd "C-S-z") 'redo)
+(global-set-key (kbd "C-S-z") 'redo)
 
 ;; 设置选区
-(global-set-key ( kbd "C-t") 'set-mark-command)
+(global-set-key (kbd "C-M-t") 'set-mark-command)
 
 ;; 返回到最近去过的地方
 (require 'recent-jump)
@@ -216,7 +209,7 @@
    ("M-}" recent-jump-small-forward)))
 
 ;; 添加删除注释
-(global-set-key ( kbd "M-;") 'comment-dwim-line)
+(global-set-key (kbd "M-;") 'comment-dwim-line)
 
 ;; 复制当前行 
 (global-set-key (kbd "M-k") 'copy-line)
@@ -236,7 +229,7 @@
 ;; 如果当前光标在一个连字符上，那么就选择包含连字符的一个标识符。
 ;; 如果当前光标在一个括号上，那么就会选择他们对应的另一个括号之间的区域。
 ;; 引号中的escape字符也是可以自动识别的。嵌套关系也是可以识别的。
-(global-set-key (kbd "C-M-t") 'wcy-mark-some-thing-at-point)
+(global-set-key (kbd "C-t") 'wcy-mark-some-thing-at-point)
 
 
 ;; ==============================
@@ -252,79 +245,59 @@
 (add-hook 'org-mode-hook
 	  (lambda () (setq truncate-lines nil)))
 
-;; For MobileOrg
-;; Set to the location of your Org files on your local system
-(setq org-directory "~/Dropbox/testorg")
-;; Set to the name of the file where new notes will be stored
-(setq org-mobile-inbox-for-pull "~/Dropbox/testorg/inbox.org")
-;; Set to <your Dropbox root directory>/MobileOrg.
-(setq org-mobile-directory "~/Dropbox/MobileOrg")
-(setq org-agenda-files (quote ("~/Dropbox/testorg/test.org")))
+;; ;; For MobileOrg
+;; ;; Set to the location of your Org files on your local system
+;; (setq org-directory "~/Dropbox/testorg")
+;; ;; Set to the name of the file where new notes will be stored
+;; (setq org-mobile-inbox-for-pull "~/Dropbox/testorg/inbox.org")
+;; ;; Set to <your Dropbox root directory>/MobileOrg.
+;; (setq org-mobile-directory "~/Dropbox/MobileOrg")
+;; (setq org-agenda-files (quote ("~/Dropbox/testorg/test.org")))
 
-(setq org-todo-keywords
-      '((type "TODO(t)" "STARTED(s)" "WAITING(w)" "APPT(a)" "|" "CANCELLED(c)" "DEFERRED(e)" "DONE(d)")
-	(sequence "PROJECT(p)" "|" "FINISHED(f)")
-	(sequence "INVOICE(i)" "SENT(n)" "|" "RCVD(r)")))
+;; (setq org-todo-keywords
+;;       '((type "TODO(t)" "STARTED(s)" "WAITING(w)" "APPT(a)" "|" "CANCELLED(c)" "DEFERRED(e)" "DONE(d)")
+;; 	(sequence "PROJECT(p)" "|" "FINISHED(f)")
+;; 	(sequence "INVOICE(i)" "SENT(n)" "|" "RCVD(r)")))
 
-;; 发布为html
-(setq org-publish-project-alist
-      '(("note-org"
-         :base-directory "~/Documents/notes/org"
-         :publishing-directory "~/Documents/notes/publish"
-         :base-extension "org"
-         :recursive t
-         :publishing-function org-publish-org-to-html
-         :auto-index t
-         :index-filename "index.org"
-         :index-title "Star's Notes"
-         :link-home "file:///home/star/Documents/notes/publish/index.html"
-         :section-numbers nil
-	 :style-include-default nil
-         :style "<link rel=\"stylesheet\" href=\"file:///home/star/Documents/notes/publish/star.css\" type=\"text/css\" />")
-        ("note-static"
-         :base-directory "~/Documents/notes/org"
-         :publishing-directory "~/Documents/notes/publish"
-         :recursive t
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|swf\\|zip\\|gz\\|txt\\|el"
-         :publishing-function org-publish-attachment)
-        ("note" 
-         :components ("note-org" "note-static")
-         :author "starpan@gmail.com")))
+;; ;; 发布为html
+;; (setq org-publish-project-alist
+;;       '(("note-org"
+;;          :base-directory "~/Documents/notes/org"
+;;          :publishing-directory "~/Documents/notes/publish"
+;;          :base-extension "org"
+;;          :recursive t
+;;          :publishing-function org-publish-org-to-html
+;;          :auto-index t
+;;          :index-filename "index.org"
+;;          :index-title "Star's Notes"
+;;          :link-home "file:///home/star/Documents/notes/publish/index.html"
+;;          :section-numbers nil
+;; 	 :style-include-default nil
+;;          :style "<link rel=\"stylesheet\" href=\"file:///home/star/Documents/notes/publish/star.css\" type=\"text/css\" />")
+;;         ("note-static"
+;;          :base-directory "~/Documents/notes/org"
+;;          :publishing-directory "~/Documents/notes/publish"
+;;          :recursive t
+;;          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|swf\\|zip\\|gz\\|txt\\|el"
+;;          :publishing-function org-publish-attachment)
+;;         ("note" 
+;;          :components ("note-org" "note-static")
+;;          :author "starpan@gmail.com")))
 
-(defun my-notes-org-publish (&optional force)
-  "Publish my notes."
-  (interactive)
-  (color-theme-my-default)
-  (org-publish (assoc "note" org-publish-project-alist) force)
-  (color-theme-blackboard))
-
-(defun my-notes-org-publish-force ()
-  "Publish my notes by force."
-  (interactive)
-  (my-notes-org-publish t))
-
-(global-set-key (kbd "C-c p") 'my-notes-org-publish)
-(global-set-key (kbd "C-c M-p") 'my-notes-org-publish-force)
-
-;; ;; Remember
-;; (org-remember-insinuate)
-;; (setq org-directory "~/Documents/notes/")
-;; (setq org-default-notes-file (concat org-directory "notes.org"))
-;; (global-set-key (kbd "<f11>") 'org-remember)
-
-;; (setq org-remember-templates
-;;       '(("Todo" ?t "* TODO %?\n %i\n" "todo.org" "Tasks")
-;;         ("Journal" ?j "* %?\n %i\n" "journal.org" date-tree)
-;;         ("Idea" ?i "* %?\n %i\n" "todo.org" "Ideas")
-;;         ("Someday" ?s "* %?\n %i\n" "todo.org" "Someday")
-;;         ("Reminder" ?r "* %?\n %i\n" "todo.org" "Reminder")))
-
-;; (defun my-edit-this-page ()
-;;   "Insert page source org file path."
+;; (defun my-notes-org-publish (&optional force)
+;;   "Publish my notes."
 ;;   (interactive)
-;;   (insert (format "[[http:/%s][Edit this page]] | [[file:%s][Open folder]]"
-;; 	   buffer-file-name
-;; 	   (file-name-directory buffer-file-name))))
+;;   (color-theme-my-default)
+;;   (org-publish (assoc "note" org-publish-project-alist) force)
+;;   (color-theme-blackboard))
+
+;; (defun my-notes-org-publish-force ()
+;;   "Publish my notes by force."
+;;   (interactive)
+;;   (my-notes-org-publish t))
+
+;; (global-set-key (kbd "C-c p") 'my-notes-org-publish)
+;; (global-set-key (kbd "C-c M-p") 'my-notes-org-publish-force)
 
 ;; ==============================
 ;; 开发相关
@@ -333,7 +306,7 @@
 (require 'config-dev)
 
 ;; 增加自定义关键字
-(dolist (mode '(c-mode c++-mode java-mode lisp-mode emacs-lisp-mode lisp-interaction-mode sh-mode sgml-mode))
+(dolist (mode '(c-mode c++-mode java-mode lisp-mode emacs-lisp-mode lisp-interaction-mode sh-mode sgml-mode python-mode))
   (font-lock-add-keywords
    mode
    '(("\\<\\(FIXME\\|TODO\\|Todo\\|HACK\\|STAR\\):" 1 font-lock-warning-face prepend))))
@@ -358,7 +331,7 @@
 ;; TODO: 最后一项不知道为啥不起作用
 (setq hl-paren-colors '("red" "yellow" "cyan" "magenta" "green" "red"))
 (am-add-hooks
- `(c-mode-common-hook lisp-mode-hook emacs-lisp-mode-hook java-mode-hook)
+ `(c-mode-common-hook lisp-mode-hook emacs-lisp-mode-hook java-mode-hook python-mode-hook)
  'highlight-parentheses-mode)
 
 ;; 将括号区域格式化代码
@@ -369,7 +342,7 @@
    ("C-]" goto-paren)))
 
 ;; 用来显示当前光标在哪个函数
-(which-func-mode t)
+(which-function-mode t)
 
 ;; CEDET
 (load-file "/home/star/emacs/el/cedet-1.1/common/cedet.el")
@@ -466,7 +439,7 @@
  `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
                   svn-log-edit-mode-hook change-log-mode-hook)
  'ac-settings-4-lisp)
-(am-add-hooks 'c-mode-common-hook 'ac-settings-4-cc)
+(am-add-hooks `(c-mode-common-hook python-mode-hook) 'ac-settings-4-cc)
 (am-add-hooks 'org-mode-hook 'ac-settings-4-org)
 
 ;; yasnippet
