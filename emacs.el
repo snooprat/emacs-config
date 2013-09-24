@@ -2,17 +2,17 @@
 ;; 加载配置
 ;; ==============================
 
-  (defconst my-emacs-path "~/emacs/" "linux的emacs相关配置文件的路径")
-  (defconst emacs-lisps-path "/usr/share/emacs/24.3/lisp/" "Linux的emacs lisp包的路径")
-  (defconst system-head-file-dir (list "/usr/include" "/usr/local/include" "/usr/include/sys") "系统头文件目录")
-  (defconst user-head-file-dir   (list "." "../include") "用户头文件目录")
-  ;; 使用daemon启动的时候,使用中文字体,光标闪烁
-  (add-hook 'after-make-frame-functions
-  	    (lambda (frame)
-  	      (with-selected-frame frame
-  		(blink-cursor-mode t)
-  		(set-fontset-font "fontset-default"
-  				  'han '("WenQuanYi Micro Hei Mono" . "unicode-bmp")))))
+(defconst my-emacs-path "~/emacs/" "linux的emacs相关配置文件的路径")
+(defconst emacs-lisps-path "/usr/share/emacs/24.3/lisp/" "Linux的emacs lisp包的路径")
+(defconst system-head-file-dir (list "/usr/include" "/usr/local/include" "/usr/include/sys") "系统头文件目录")
+(defconst user-head-file-dir   (list "." "../include") "用户头文件目录")
+;; 使用daemon启动的时候,使用中文字体,光标闪烁
+(add-hook 'after-make-frame-functions
+	  (lambda (frame)
+	    (with-selected-frame frame
+	      (blink-cursor-mode t)
+	      (set-fontset-font "fontset-default"
+				'han '("WenQuanYi Micro Hei Mono" . "unicode-bmp")))))
 
 (defconst my-emacs-lisps-path (concat my-emacs-path "el/") "我的emacs lisp包的路径")
 (defconst my-cedet-el (concat my-emacs-lisps-path "cedet-1.1/common/cedet.el") "官方cedet.el路径")
@@ -38,11 +38,11 @@
 (setq column-number-mode t)
 
 ;; 显示行号
-;; (am-add-hooks
-;;  `(c-mode-common-hook lisp-mode-hook emacs-lisp-mode-hook java-mode-hook sh-mode-hook)
-;;  (lambda()
-;;    (unless (eq major-mode 'image-mode)
-;;      (linum-mode t))))
+(am-add-hooks
+ `(c-mode-common-hook lisp-mode-hook emacs-lisp-mode-hook java-mode-hook sh-mode-hook python-mode-hook)
+ (lambda()
+   (unless (eq major-mode 'image-mode)
+     (linum-mode t))))
 
 ;; 在fringe上显示一个小箭头指示当前buffer的边界
 (setq-default indicate-buffer-boundaries 'left)
@@ -112,13 +112,15 @@
 (require 'config-file)
 
 ;; 备份文件
-(setq backup-by-copying t ; 使用copy方式
-      backup-directory-alist '(("." . "~/emacs/backup/")) ; 自动备份目录
-      delete-old-versions t ; 自动删除旧的备份文件
-      kept-new-versions 4 ; 保留最近的4个备份文件
-      kept-old-versions 2 ; 保留最早的2个备份文件
-      version-control t ; 多次备份
-      vc-follow-symlinks t) ; 直接编辑受VC控制的原文档
+;; (setq backup-by-copying t ; 使用copy方式
+;;       backup-directory-alist '(("." . "~/emacs/backup/")) ; 自动备份目录
+;;       delete-old-versions t ; 自动删除旧的备份文件
+;;       kept-new-versions 4 ; 保留最近的4个备份文件
+;;       kept-old-versions 2 ; 保留最早的2个备份文件
+;;       version-control t ; 多次备份
+;;       vc-follow-symlinks t) ; 直接编辑受VC控制的原文档
+(setq make-backup-files nil
+      vc-follow-symlinks t)
 
 ;; ffap,打开当前point的文件
 (ffap-bindings)
@@ -148,7 +150,8 @@
 (global-set-key (kbd "C-x C-r") 'recentf-open-files)
 
 ;; 查找文件中的关键字
-(setq grep-find-command "find . -name \\* -type f -print0 | xargs -0 -e grep -nH -e ")
+;; (setq grep-find-command "find . -name \\* -type f -print0 | xargs -0 -e grep -nH -e ")
+(setq grep-find-command "egrep -rnH -e ")
 (global-set-key (kbd "C-M-g") 'grep-find)
 
 ;; 快速打开
@@ -448,3 +451,24 @@
 (yas/initialize)
 (setq yas/root-directory (concat my-yasnippet-path "snippets"))
 (yas/load-directory yas/root-directory)
+
+
+;; Markdown mode
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;; iPython
+(setq
+ python-shell-interpreter "ipython"
+ python-shell-interpreter-args ""
+ python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+ python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+ python-shell-completion-setup-code
+   "from IPython.core.completerlib import module_completion"
+ python-shell-completion-module-string-code
+   "';'.join(module_completion('''%s'''))\n"
+ python-shell-completion-string-code
+   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
