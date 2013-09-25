@@ -37,12 +37,12 @@
 ;; 显示列号
 (setq column-number-mode t)
 
-;; 显示行号
-(am-add-hooks
- `(c-mode-common-hook lisp-mode-hook emacs-lisp-mode-hook java-mode-hook sh-mode-hook python-mode-hook)
- (lambda()
-   (unless (eq major-mode 'image-mode)
-     (linum-mode t))))
+;; ;; 显示行号
+;; (am-add-hooks
+;;  `(c-mode-common-hook emacs-lisp-mode-hook java-mode-hook sh-mode-hook python-mode-hook)
+;;  (lambda()
+;;    (unless (eq major-mode 'image-mode)
+;;      (linum-mode t))))
 
 ;; 在fringe上显示一个小箭头指示当前buffer的边界
 (setq-default indicate-buffer-boundaries 'left)
@@ -112,15 +112,16 @@
 (require 'config-file)
 
 ;; 备份文件
-;; (setq backup-by-copying t ; 使用copy方式
+;; (setq backup-by-copying t				  ; 使用copy方式
 ;;       backup-directory-alist '(("." . "~/emacs/backup/")) ; 自动备份目录
-;;       delete-old-versions t ; 自动删除旧的备份文件
-;;       kept-new-versions 4 ; 保留最近的4个备份文件
-;;       kept-old-versions 2 ; 保留最早的2个备份文件
-;;       version-control t ; 多次备份
-;;       vc-follow-symlinks t) ; 直接编辑受VC控制的原文档
-(setq make-backup-files nil
-      vc-follow-symlinks t)
+;;       delete-old-versions t				  ; 自动删除旧的备份文件
+;;       kept-new-versions 4   ; 保留最近的4个备份文件
+;;       kept-old-versions 2   ; 保留最早的2个备份文件
+;;       version-control t	    ; 多次备份
+;;       vc-follow-symlinks t) ; 打开Link文件时自动编辑原文件
+(setq make-backup-files nil	    ; 禁用自动备件
+      auto-save-default nil	    ; 禁用自动保存#文件
+      vc-follow-symlinks t)	    ; 打开Link文件时自动编辑原文件
 
 ;; ffap,打开当前point的文件
 (ffap-bindings)
@@ -324,10 +325,10 @@
   '(progn (flymake-settings)
 	  ;; (setq flymake-no-changes-timeout 1)
 	  (eal-define-keys
-	    'flymake-mode-map
-	    `(("C-c N"   flymake-goto-next-error-disp)
-	      ("C-c P"   flymake-goto-prev-error-disp)
-	      ("C-c M-w" flymake-display-current-warning/error)))))
+	   'flymake-mode-map
+	   `(("C-c N"   flymake-goto-next-error-disp)
+	     ("C-c P"   flymake-goto-prev-error-disp)
+	     ("C-c W" flymake-display-current-warning/error)))))
 
 ;; 高亮匹配的括号
 (require 'highlight-parentheses)
@@ -472,3 +473,9 @@
    "';'.join(module_completion('''%s'''))\n"
  python-shell-completion-string-code
    "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+
+;; Display the number and location of flymake errors/warnings on the fringe
+(require 'rfringe)
+
+;; Display flymake messages in the minibuffer
+(require 'flymake-cursor)

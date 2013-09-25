@@ -67,7 +67,12 @@
 (defun flymake-settings ()
   "Settings for `flymake'."
   (setq flymake-gui-warnings-enabled nil)
-  
+
+  ;; Underline errors instead of highlight
+  (custom-set-faces
+   '(flymake-errline ((((class color)) (:underline (:style wave :color "red")))))
+   '(flymake-warnline ((((class color)) (:underline (:style wave :color"yellow"))))))
+
   (defvar flymake-makefile-filenames '("Makefile" "makefile" "GNUmakefile") "File names for make.")
   
   (defun flymake-get-make-gcc-cmdline (source base-dir)
@@ -152,7 +157,22 @@ Use CREATE-TEMP-F for creating temp copy."
      '(memq major-mode dev-modes)))
 
   (eval-after-load "emaci"
-    `(flymake-settings-4-emaci)))
+    `(flymake-settings-4-emaci))
 
+;; pyflakes
+;; (when (load "flymake" t)
+  (defun flymake-pyflakes-init ()
+  ;; Make sure it's not a remote buffer or flymake would not work
+  ;; (when (not (subsetp (list (current-buffer)) (tramp-list-remote-buffers)))
+    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+		       'flymake-create-temp-inplace))
+	   (local-file (file-relative-name
+			temp-file
+			(file-name-directory buffer-file-name))))
+      (list "pyflakes" (list local-file))))
+  
+  (add-to-list 'flymake-allowed-file-name-masks
+	       '("\\.py\\'" flymake-pyflakes-init))
+  )
 
 (provide 'config-dev)
