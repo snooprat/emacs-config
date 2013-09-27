@@ -27,6 +27,19 @@
 ;; http://emacser.com/eval-after-load.htm
 (require 'eval-after-load)
 
+;; El-Get allows you to install and manage elisp code for Emacs.
+(add-to-list 'load-path "~/emacs/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/emacs/el-get/recipes/recipes")
+(el-get 'sync)
+
 ;; ==============================
 ;; 显示设置
 ;; ==============================
@@ -443,8 +456,26 @@
  `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
                   svn-log-edit-mode-hook change-log-mode-hook)
  'ac-settings-4-lisp)
-(am-add-hooks `(c-mode-common-hook python-mode-hook) 'ac-settings-4-cc)
+(am-add-hooks 'c-mode-common-hook 'ac-settings-4-cc)
 (am-add-hooks 'org-mode-hook 'ac-settings-4-org)
+
+;; Jedi python completion
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:tooltip-method nil
+      jedi:complete-on-dot t)
+
+(defun ac-settings-4-py ()
+  (setq ac-sources
+        '(ac-source-jedi-direct
+	  ac-source-yasnippet
+          ac-source-dictionary
+          ac-source-abbrev
+          ac-source-words-in-buffer
+          ac-source-words-in-same-mode-buffers
+          ac-source-files-in-current-dir
+          ac-source-filename)))
+
+(am-add-hooks 'python-mode-hook 'ac-settings-4-py)
 
 ;; yasnippet
 (add-to-list 'load-path my-yasnippet-path)
@@ -479,3 +510,4 @@
 
 ;; Display flymake messages in the minibuffer
 (require 'flymake-cursor)
+
