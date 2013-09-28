@@ -16,7 +16,7 @@
 
 (defconst my-emacs-lisps-path (concat my-emacs-path "el/") "我的emacs lisp包的路径")
 (defconst my-cedet-el (concat my-emacs-lisps-path "cedet-1.1/common/cedet.el") "官方cedet.el路径")
-(defconst my-auto-complete-path (concat my-emacs-lisps-path "auto-complete/") "auto complete路径")
+(defconst my-auto-complete-path "/home/star/emacs/el-get/auto-complete/" "auto complete路径")
 (defconst my-yasnippet-path (concat my-emacs-lisps-path "yasnippet-0.6.1c/") "yasnippet路径")
 
 (setq user-emacs-directory my-emacs-path)
@@ -408,7 +408,7 @@
 (require 'auto-complete-config)
 (setq ac-modes (append '(org-mode)
 		      ac-modes))
-(add-to-list 'ac-dictionary-directories (concat my-auto-complete-path "ac-dict/"))
+(add-to-list 'ac-dictionary-directories (concat my-auto-complete-path "dict/"))
 (ac-config-default)
 ;; (global-auto-complete-mode t)
 
