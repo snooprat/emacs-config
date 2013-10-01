@@ -17,7 +17,7 @@
 (defconst my-emacs-lisps-path (concat my-emacs-path "el/") "我的emacs lisp包的路径")
 (defconst my-cedet-el (concat my-emacs-lisps-path "cedet-1.1/common/cedet.el") "官方cedet.el路径")
 (defconst my-auto-complete-path "/home/star/emacs/el-get/auto-complete/" "auto complete路径")
-(defconst my-yasnippet-path (concat my-emacs-lisps-path "yasnippet-0.6.1c/") "yasnippet路径")
+(defconst my-yasnippet-path "/home/star/emacs/el-get/yasnippet/" "yasnippet路径")
 
 (setq user-emacs-directory my-emacs-path)
 (add-to-list 'load-path my-emacs-lisps-path)
@@ -403,6 +403,11 @@
    ("C-c p" senator-previous-tag)
    ("M-n" semantic-ia-complete-symbol-menu)))
 
+;; yasnippet
+(add-to-list 'load-path my-yasnippet-path)
+(require 'yasnippet)
+(yas-global-mode 1)
+
 ;; auto-complete
 (add-to-list 'load-path my-auto-complete-path)
 (require 'auto-complete-config)
@@ -417,7 +422,7 @@
  'ac-complete-mode-map
  `(("<return>"   nil)
    ("RET"        nil)
-   ("M-j"        ac-complete)))
+   ("<tab>"      ac-complete)))
 
 (defun ac-settings-4-cc ()
     (setq ac-sources
@@ -466,23 +471,14 @@
 
 (defun ac-settings-4-py ()
   (setq ac-sources
-        '(ac-source-jedi-direct
+        '(;ac-source-jedi-direct
 	  ac-source-yasnippet
           ac-source-dictionary
-          ac-source-abbrev
-          ac-source-words-in-buffer
           ac-source-words-in-same-mode-buffers
           ac-source-files-in-current-dir
           ac-source-filename)))
 
 (am-add-hooks 'python-mode-hook 'ac-settings-4-py)
-
-;; yasnippet
-(add-to-list 'load-path my-yasnippet-path)
-(require 'yasnippet)
-(yas/initialize)
-(setq yas/root-directory (concat my-yasnippet-path "snippets"))
-(yas/load-directory yas/root-directory)
 
 
 ;; Markdown mode
@@ -510,4 +506,3 @@
 
 ;; Display flymake messages in the minibuffer
 (require 'flymake-cursor)
-
