@@ -365,7 +365,7 @@
 (load-file "/home/star/emacs/el/cedet-1.1/common/cedet.el")
 (global-ede-mode 1)
 (semantic-load-enable-code-helpers)
-;; (semantic-load-enable-semantic-debugging-helpers)
+(global-semantic-idle-summary-mode nil)	; Too slow in python mode
 (global-semantic-tag-folding-mode 1)
 
 ;; 代码折叠或显示
